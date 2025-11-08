@@ -26,9 +26,51 @@ typedef struct rumble_state {
     uint16_t gain;
 } rumble_state_t;
 
+/**
+ * Initialize a rumble_state instance with no uploaded effects and max gain.
+ *
+ * @param state Rumble container to initialize.
+ */
 void rumble_state_init(rumble_state_t *state);
+
+/**
+ * Upload or replace an FF_RUMBLE effect in the local slot pool.
+ *
+ * @param state  Rumble container to mutate.
+ * @param effect Effect payload from UI_BEGIN_FF_UPLOAD; updated with slot id.
+ * @return 0 on success, -1 if the slot pool is full or the payload is invalid.
+ */
 int rumble_upload_effect(rumble_state_t *state, struct ff_effect *effect);
+
+/**
+ * Erase a previously uploaded effect slot.
+ *
+ * @param state     Rumble container to mutate.
+ * @param effect_id Slot index reported by upload.
+ * @return 0 on success, -1 if the slot does not exist.
+ */
 int rumble_erase_effect(rumble_state_t *state, int effect_id);
+
+/**
+ * Start or stop playback of the selected effect.
+ *
+ * @param state     Rumble container to mutate.
+ * @param effect_id Slot index to play.
+ * @param repeat    Number of iterations requested by uinput (0 stops playback).
+ */
 void rumble_play_effect(rumble_state_t *state, int effect_id, int repeat);
+
+/**
+ * Update the global rumble gain as provided by the host OS.
+ *
+ * @param state Rumble container to mutate.
+ * @param gain  0-0xFFFF scaling factor applied to the stored magnitudes.
+ */
 void rumble_apply_gain(rumble_state_t *state, uint16_t gain);
+
+/**
+ * Periodic timer hook to turn the motor off when the requested duration expires.
+ *
+ * @param state Rumble container to service.
+ */
 void rumble_tick(rumble_state_t *state);

@@ -7,10 +7,15 @@
 
 /**
  * Reproduce the stock inputd GPIO bring-up (power rails, DIP switch, rumble idle).
+ *
+ * @return void
  */
 void gpio_board_init(void);
 
 /**
  * Drive the rumble GPIO high/low, suppressing redundant writes.
+ *
+ * @param enable true to energize the motor, false to stop it.
+ * @return void
  */
 void gpio_set_rumble(bool enable);
