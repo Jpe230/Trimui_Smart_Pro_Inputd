@@ -1,5 +1,5 @@
 services:
-  tsp-builder:
+  tsp-builder-inputd:
     platform: linux/arm64
     user: "${UID:-1000}:${GID:-1000}"
     build:

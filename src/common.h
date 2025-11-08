@@ -11,19 +11,20 @@
 #define BAUD_RATE B19200
 
 /**
- * Struct for the state of each of the buttons
+ * Struct for the state of each button bit.
+ * (Use JOYBTN_* names to avoid clashes with linux/input.h macros.)
  *
- * Note: BTN_F1 is unused in the left side
+ * Note: JOYBTN_F1 is unused in the left side
  */
 typedef struct {
-    uint8_t BTN_BUMPER : 1;
-    uint8_t BTN_TRIGGER : 1;
-    uint8_t BTN_NORTH : 1;
-    uint8_t BTN_WEST : 1;
-    uint8_t BTN_EAST : 1;
-    uint8_t BTN_SOUTH : 1;
-    uint8_t BTN_F1 : 1;
-    uint8_t BTN_F2 : 1;
+    uint8_t JOYBTN_BUMPER : 1;
+    uint8_t JOYBTN_TRIGGER : 1;
+    uint8_t JOYBTN_NORTH : 1;
+    uint8_t JOYBTN_WEST : 1;
+    uint8_t JOYBTN_EAST : 1;
+    uint8_t JOYBTN_SOUTH : 1;
+    uint8_t JOYBTN_F1 : 1;
+    uint8_t JOYBTN_F2 : 1;
 } joybutton_bitfield_t;
 
 /**
@@ -59,4 +60,5 @@ typedef struct {
     uint16_t y_max;
     uint16_t x_zero;
     uint16_t y_zero;
+    uint16_t deadzone;
 } joypad_cali_t;

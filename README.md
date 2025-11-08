@@ -1,72 +1,57 @@
-# Trimui Smart Pro Joystick Calibration
+# Trimui Smart Pro Input Daemon
 
-Small program to calibrate the joysticks for the TSP
+Userspace daemon that bonds the Trimui Smart Pro’s two serial pads into a single Linux joystick (`/dev/input/js0`). It reads both halves over `/dev/ttyS4` and `/dev/ttyS3`, applies the on-device calibration files, exposes a virtual controller via `uinput`, and mirrors the stock firmware’s GPIO bring-up so it can run immediately after boot.
 
-Written in C and SDL2
+## Highlights
 
-## Installation
+- **Dual-serial aggregation:** Continuously polls both pad MCUs at 1 kHz, reopens the TTY automatically when errors occur, and keeps axis/button state in sync with the uinput device.
+- **Calibration aware:** Loads `joypad.config` and `joypad_right.config` (left/right) from `/mnt/UDISK/`, falling back to `/userdata/system/config/trimui-input/`, with an optional override directory passed on the command line. Each file can specify `x_min`, `x_max`, `x_zero`, `y_min`, `y_max`, `y_zero`, and `deadzone` (default 1024).
+- **Rumble support:** Advertises `FF_RUMBLE`/`FF_GAIN`, keeps a small effect pool, and translates play commands into GPIO 227 toggles so native ports can vibrate the device.
+- **Board bring-up:** Reproduces the stock `inputd` GPIO pokes (PD14/PD18 rails, rumble default, DIP input, optional 5 V enable) so the pads, DIP switch, and rumble motor are usable even on a cold boot.
+- **Deterministic startup:** After the uinput node is created the daemon waits 1 s before zeroing the sticks to match the OEM behavior and reduce drift.
 
-1. Download the [lastest release](https://github.com/Jpe230/Trimui_Smart_Pro-JoyCalibration/releases)
-2. Extract the content of the zip folder into your `/userdata/roms/ports/TSP_Calibration/` folder, the structure needs to be as follow:
+## Building
 
+The repo ships with a cross-compilation container. From the project root:
+
+```bash
+docker compose up --build
 ```
-├─ userdata/roms/ports/
-   ├─ TSP_Calibration/
-      ├─ bin/
-      │  ├─ TSP_Calibration
-      ├─ TSP_Calibration.sh
-```
-> Create the folder `TSP_Calibration` if necessary
 
-3. Update your gamelist
-4. In the `Ports` section a new entry called `TSP_Calibration` should appear
+The resulting binary lives at `build/tsp_inputd/bin/tsp_inputd`.
 
-## Usage
+If you prefer a native toolchain, install `gcc`, `make`, and standard headers for your aarch64 rootfs, then run:
 
-### Controls
-
-* A Button: Select right joystick
-* B Button: Select left joystick
-* X Button: Close the program
-
-### Start screen
-
-In this screen you can test your joysticks and select which joystick to calibrate, the program will guide you in calibrating your sticks.
-
-![Initial screen](./screenshots/test_screen.png)
-
-### Calibration screen
-
-You need to rotate your joysticks for about 5-6 to capture its max. position.
-
->It's recommended to not apply to much pressure otherwise you will struggle in games that requires full range of motion.
-
-![calibration screen](./screenshots/rotation.png)
-
-In the next section the program will capture the rest/zero position of the joystick, it is important to not move the stick otherwise the joystick will be offcenter.
-
-![zeroing screen](./screenshots/zero.png)
-
-### Applying calibration
-
-This program kills and restarts a daemon called `trimui-inputd` which is responsible to convert the raw values of the sticks to virtual controller inside Linux. It is recommended to perform a reboot after each calibration.
-
-![saving screen](./screenshots/saving.png)
-
-This program calls the utility `batocera-save-overlay` it could take a while, especially if you have several change in your filesystem or it is the first time your are using it.
-
-
-## Compile
-
-To compile you will need and aarch64 device or rootfs with the build essentials
-
->I personally use my [Sonic Pad rootfs creator](https://github.com/Jpe230/SonicPad-Debian/) for my dev enviroment (same SoC btw)
-
-Additionally you will need to install the libraries for `SDL2` and `SDL2 TTF`
-
-To compile:
 ```bash
 make
 ```
 
-The result will be located at `./build/TSP_Calibration`
+## Running
+
+```bash
+./build/tsp_inputd/bin/tsp_inputd [config_dir]
+```
+
+- Without arguments the daemon searches `/mnt/UDISK` first, then `/userdata/system/config/trimui-input/`.
+- If `config_dir` is supplied, the daemon looks for `joypad.config` and `joypad_right.config` there before falling back to the default locations.
+- All GPIO control happens via sysfs; run as root (or grant sufficient permissions) so the daemon can drive the pins and open `/dev/uinput`.
+
+## Configuration File Format
+
+```
+x_min=0
+x_max=4095
+y_min=0
+y_max=4095
+x_zero=2048
+y_zero=2048
+deadzone=1024
+```
+
+Values are unsigned integers. `deadzone` clamps the ABS flat value and software filtering range; if omitted it defaults to 1024.
+
+## Notes
+
+- The daemon targets the stock Trimui Smart Pro kernel (19200 baud serial pads, sysfs GPIO numbers shown above). If your board revision changes pin muxing, update `src/gpio/gpio.c`.
+- Rumble currently uses an on/off duty cycle. If you need variable intensity, consider swapping GPIO 227 to a PWM-capable interface or extend the driver with a software PWM loop.
+- Calibration files are not modified by the daemon; use the OEM calibration utility or your own tool to update them, then restart this service.

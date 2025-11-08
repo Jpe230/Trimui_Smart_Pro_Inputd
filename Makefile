@@ -1,20 +1,21 @@
 CC = gcc
 CFLAGS = -Wall -Wextra
-LDFLAGS = -lSDL2 -lSDL2_ttf
+LDFLAGS = -lrt
 
-TARGET = TSP_Calibration
+TARGET = tsp_inputd
 
 SRCDIR = src
 BUILDDIR = build
 OBJDIR = $(BUILDDIR)/obj
 BINDIR = $(BUILDDIR)/$(TARGET)/bin
 
-ASSETS = assets
-CONFIG = $(ASSETS)/joystick.ini
-LAUNCHSCRIPT = $(ASSETS)/TSP_Calibration.sh
-CALISCRIPT = $(ASSETS)/apply_calibration.sh
+SRCS = $(SRCDIR)/main.c \
+       $(SRCDIR)/controller/controller.c \
+       $(SRCDIR)/config/config.c \
+       $(SRCDIR)/gpio/gpio.c \
+       $(SRCDIR)/rumble/rumble.c \
+       $(SRCDIR)/serial/serial-joystick.c
 
-SRCS = $(SRCDIR)/main.c $(SRCDIR)/calibration/calibration.c $(SRCDIR)/gfx/gfx.c $(SRCDIR)/gfx/panel.c $(SRCDIR)/gfx/utils/primitives.c $(SRCDIR)/serial/serial-joystick.c
 OBJS = $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
 $(BINDIR)/$(TARGET): $(OBJS) | $(BINDIR)
@@ -29,10 +30,6 @@ $(OBJDIR):
 
 $(BINDIR):
 	mkdir -p $(BINDIR)
-	cp $(CONFIG) $(BINDIR)/
-	cp $(CALISCRIPT) $(BINDIR)/
-	cp $(LAUNCHSCRIPT) $(BINDIR)/../
-	chmod +x $(BINDIR)/../$(notdir $(LAUNCHSCRIPT)) $(BINDIR)/$(notdir $(CALISCRIPT))
 
 .PHONY: clean
 clean:
