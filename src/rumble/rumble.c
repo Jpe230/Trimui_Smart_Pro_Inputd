@@ -1,3 +1,8 @@
+// Copyright 2025 Jose Pablo Ramirez (@Jpe230)
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+// Lightweight FF_RUMBLE effect manager (upload/erase/play) with GPIO backing.
+
 #include "rumble.h"
 
 #include <stdbool.h>

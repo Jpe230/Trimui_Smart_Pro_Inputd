@@ -1,3 +1,8 @@
+// Copyright 2025 Jose Pablo Ramirez (@Jpe230)
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+// Calibration configuration loader: parses the Trimui INI files and applies defaults.
+
 #include "config.h"
 
 #include <ctype.h>

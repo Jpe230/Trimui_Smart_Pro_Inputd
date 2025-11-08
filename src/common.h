@@ -1,4 +1,4 @@
-// Copyright 2024 Jose Pablo Ramirez (@Jpe230)
+// Copyright 2025 Jose Pablo Ramirez (@Jpe230)
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #pragma once
@@ -41,7 +41,7 @@ typedef union
  *
  * Header: Unknown meaning
  * Buttons: The bitfield for the button state
- * X & Y: The current ADC values
+ * X & Y : The current ADC values
  */
 typedef struct {
     uint16_t header;

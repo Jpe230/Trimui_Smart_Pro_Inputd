@@ -1,3 +1,8 @@
+// Copyright 2025 Jose Pablo Ramirez (@Jpe230)
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+// Thin wrapper around the Trimui pad serial protocol (open/config/read frame).
+
 #include "serial-joystick.h"
 #include <fcntl.h>
 #include <unistd.h>

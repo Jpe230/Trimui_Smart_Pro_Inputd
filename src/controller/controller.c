@@ -1,3 +1,8 @@
+// Copyright 2025 Jose Pablo Ramirez (@Jpe230)
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+// Core runtime: reads both serial pads, maps them to uinput, and handles FF rumble.
+
 #include "controller.h"
 
 #include <errno.h>
@@ -33,11 +38,13 @@
 #define AXIS_MIN (-32768)
 #define AXIS_MAX (32767)
 
+// Identifies which half-pad produced a packet (left or right).
 typedef enum {
     SIDE_LEFT = 0,
     SIDE_RIGHT = 1
 } joystick_side_t;
 
+// State for one serial pad half (file descriptor, calibration, last values).
 typedef struct {
     const char *serial_path;
     const char *primary_cfg;
@@ -49,6 +56,7 @@ typedef struct {
     int fd;
 } halfpad_t;
 
+// Aggregated controller composed of both halves plus the uinput + rumble handles.
 typedef struct {
     halfpad_t left;
     halfpad_t right;

@@ -1,3 +1,8 @@
+// Copyright 2025 Jose Pablo Ramirez (@Jpe230)
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+// Entry point responsible for parsing CLI args and delegating to the controller runtime.
+
 #include <stdio.h>
 #include <stdlib.h>
 

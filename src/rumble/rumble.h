@@ -1,3 +1,6 @@
+// Copyright 2025 Jose Pablo Ramirez (@Jpe230)
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 #pragma once
 
 #include <linux/input.h>
@@ -13,6 +16,9 @@ typedef struct {
     bool in_use;
 } rumble_slot_t;
 
+/**
+ * Tracks uploaded rumble effects and the currently playing one.
+ */
 typedef struct rumble_state {
     rumble_slot_t slots[RUMBLE_MAX_EFFECTS];
     bool rumble_active;

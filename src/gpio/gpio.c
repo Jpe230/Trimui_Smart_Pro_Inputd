@@ -1,3 +1,8 @@
+// Copyright 2025 Jose Pablo Ramirez (@Jpe230)
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+// Sysfs GPIO helpers used to power up the pads and drive the rumble motor.
+
 #include "gpio.h"
 
 #include <errno.h>
