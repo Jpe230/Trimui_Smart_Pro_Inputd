@@ -11,5 +11,6 @@ services:
       - ./:/workspace
     working_dir: /workspace
     command: >
-      bash -lc "make &&
+      bash -lc "make clean &&
+                make &&
                 echo '✅ Build finished. Output inside ./build'"

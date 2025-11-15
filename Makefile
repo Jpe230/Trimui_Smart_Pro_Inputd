@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra
 LDFLAGS = -lrt
 
-TARGET = tsp_inputd
+TARGET = trimui_inputd_smart_pro
 
 SRCDIR = src
 BUILDDIR = build

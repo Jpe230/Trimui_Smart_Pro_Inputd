@@ -5,6 +5,7 @@
 
 #include "rumble.h"
 
+#include <errno.h>
 #include <stdbool.h>
 #include <string.h>
 #include <time.h>
@@ -53,35 +54,44 @@ static int allocate_slot(struct rumble_state *state)
 int rumble_upload_effect(rumble_state_t *state, struct ff_effect *effect)
 {
     if (!state || !effect) {
-        return -1;
+        errno = EINVAL;
+        return -EINVAL;
     }
 
     if (effect->type != FF_RUMBLE) {
-        return -1;
+        errno = EINVAL;
+        return -EINVAL;
     }
 
     int id = effect->id;
     if (id < 0) {
         id = allocate_slot(state);
         if (id < 0) {
-            return -1;
+            errno = ENOSPC;
+            return -ENOSPC;
         }
-    } else if (id >= RUMBLE_MAX_EFFECTS || !state->slots[id].in_use) {
-        return -1;
+    } else if (id >= RUMBLE_MAX_EFFECTS) {
+        errno = EINVAL;
+        return -EINVAL;
+    } else if (!state->slots[id].in_use) {
+        state->slots[id].in_use = true;
     }
 
     state->slots[id].effect = *effect;
     state->slots[id].effect.id = id;
-    state->slots[id].in_use = true;
     effect->id = id;
     return 0;
 }
 
 int rumble_erase_effect(rumble_state_t *state, int effect_id)
 {
-    if (!state) return -1;
+    if (!state) {
+        errno = EINVAL;
+        return -EINVAL;
+    }
     if (effect_id < 0 || effect_id >= RUMBLE_MAX_EFFECTS) {
-        return -1;
+        errno = EINVAL;
+        return -EINVAL;
     }
     state->slots[effect_id].in_use = false;
     if (state->rumble_active && state->slots[effect_id].effect.id == effect_id) {
