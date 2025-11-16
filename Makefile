@@ -9,12 +9,7 @@ BUILDDIR = build
 OBJDIR = $(BUILDDIR)/obj
 BINDIR = $(BUILDDIR)/$(TARGET)/bin
 
-SRCS = $(SRCDIR)/main.c \
-       $(SRCDIR)/controller/controller.c \
-       $(SRCDIR)/config/config.c \
-       $(SRCDIR)/gpio/gpio.c \
-       $(SRCDIR)/rumble/rumble.c \
-       $(SRCDIR)/serial/serial-joystick.c
+SRCS = SRCS = $(shell find $(SRCDIR) -type f -name "*.c")
 
 OBJS = $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
