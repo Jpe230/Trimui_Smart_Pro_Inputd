@@ -9,8 +9,7 @@ BUILDDIR = build
 OBJDIR = $(BUILDDIR)/obj
 BINDIR = $(BUILDDIR)/$(TARGET)/bin
 
-SRCS = SRCS = $(shell find $(SRCDIR) -type f -name "*.c")
-
+SRCS = $(shell find $(SRCDIR) -type f -name "*.c")
 OBJS = $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
 $(BINDIR)/$(TARGET): $(OBJS) | $(BINDIR)
